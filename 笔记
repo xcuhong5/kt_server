@@ -1,0 +1,77 @@
+1.聚合工程 模块拆分，a. 父工程 springboot 工程 下面的都是maven 工程 ; 引入公共依赖，子模块 使用
+                    b. model 模块 放实体  ，会注入到 service
+                    c. common - srvice-utill 放配置 和 工具类   ，会注入到 service
+                    d. service 放 业务逻辑 和 controller
+                    e. mybatis X 代码自动生成
+
+2. swagger2 是 前端rest 请求 api接口测试用的，也就是 controller 测试，
+                    a. 在父工程 引入相关依赖 ，common 中 配置swagger 并启用，
+                            包的路径做好和使用模块类的包路径类似，否则 包扫描会扫不进去
+                            类注解@Configuration  @EnableSwagger2，
+                    b. 引入common 供 service 使用，因为是模块引入 需要在启动类添加注解 将swagger2配置类加载到spring容器
+                            @ComponentScan(basePackages = "com.vod.*")，这个包路径是扫common的也是扫当前模块的,所以两个模块的包路径
+                            最好相似一些，否则 有些类加载不进去。 使用者 模块 的yml 加入：spring: mvc: pathmatch: matching-strategy: ant_path_matcher
+                    c. swagger2 ui的使用，域名:端口/swagger-ui.html 访问 api测试 页面
+                    d. swagger2 的 方法 类 参数 说明的注解：类 备注声明 注解： @Api(tags = "讲师信息 控制层")
+                                                           方法 备注声明 注解： @ApiOperation("查询 全部 讲师")
+                                                           参数 备注声明 注解： @ApiParam(name = "id", value = "ID", required = true)
+
+3.前端： vue.js   vscode 开发，默认安装：1. 下载插件 chinese 中文简体，live server 服务器，vetur 工具，vue-helper
+                                      2. 安装 nodejs 默认安装，这是运行的服务端，npm -v 有信息则成功，集成了 npm
+                                      3. npm -v 查看版本，vscode 建空文件夹，npm init -y 生成默认的 package.json 项目初始化，类似maven
+                                      4. 经过下面的配置，以后所有的 npm install 都会经过淘宝的镜像地址下载
+                                             npm config set registry https://registry.npm.taobao.org
+                                             查看npm配置信息     npm config list
+                                      5. npm install xxx.js 下载依赖，有依赖文件 直接 npm install
+                                      6. npm run dev 启动项目
+                                      7. 前后端分离 前后端访问涉及到跨域，springboot 在controller加 @CrossOrigin 解决
+
+4. 腾讯云cos 对象存储，此处存储用户头像图片：1. 腾讯云 注册，找到对象存储，创建桶 记录 地域 ， id 和 key
+                                           2. 上传文件到 cos ；详情看代码 fileupload
+
+5. easyExcel： 文件的 导入导出，添加依赖 详情 见代码 SubjectController
+
+6. 腾讯云 云点播 vod，视频上传，搜索云点播 id 和key 就用 cos 的，
+                数据库 记录 video 的id，进行 上传 删除 VodController 代码呈现
+
+7. springcloud 是一系列成熟技术的集合，它利用Spring Boot的开发便利性简化了分布式系统基础设施的开发，
+    如服务发现、服务注册、配置中心、消息总线、负载均衡、 熔断器、数据监控等，
+    都可以用Spring Boot的开发风格做到一键启动和部署
+    和springboot 的 关系： springcloud 是建立在springboot 之上，springcloud 不可单独运行
+        而springboot 可以单独运行，springboot 就是spring 做的高级封装
+    springcloud 相关组件：服务发现——Netflix Eureka （Nacos）
+                         服务调用——Netflix Feign
+                         熔断器——Netflix Hystrix
+                         服务网关——Spring Cloud GateWay
+                         分布式配置——Spring Cloud Config  （Nacos）
+                         消息总线 —— Spring Cloud Bus （Nacos）
+    1. Nacos 注册中心/ 配置中心，可以将 Nacos 看做是中介，生产者 和 消费者 的调用，生产者在Nacos 注册
+            消费者 到 Nacos 中 获取；
+            下载 https://github.com/alibaba/nacos/releases  然后再bin 下 cmd 进 dos，
+            启动命令： startup.cmd -m standalone
+                http://localhost:8848/nacos 访问  账号密码 nacos；
+                工程中添加依赖，启动类 加注解 @EnableDiscoveryClient 开启 nacos 服务
+                配置文件 设置ip端口：  spring:cloud:nacos:discovery:server-addr: 127.0.0.1:8848
+                启动工程，在ui 查看 该项目
+    2. Gateway 网关：跨域访问的解决方案，简单有效和统一的API路由管理方式，
+                核心概念： 路由 断言 过滤器
+                在网关模块 配置文件中 配置需要服务注册的模块信息 和 请求映射规则 的配置类 参考 service_gateway工程；
+                需要 先启动 nacos 然后启动网关模块，登录 nacos ui查看服务 状态
+                然后依次启动 其他模块
+
+8. 远程调用： 不同模块之间的 接口调用 :
+        调用者 service_activity下的CouponUseServiceImpl.java  - > 中间层接口 service_user_client -> 被调用者 service_user
+                调用者： 启动类 加注解 @EnableFeignClients(basePackages = "com.client")
+                    包路径 是 中间层 接口 类的包路径；  将中间层 引入 到 pom中
+                中间层： 是接口 interface ，类注解 @FeignClient(value = "service-user")
+                    表示 service-user 服务 是被调用者，然后中间层 添加相关依赖 openfeign
+                被调用者： 将中间层 引入 到 pom中
+
+9. 微信公众号 ：https://mp.weixin.qq.com/  只能企业创建，个人无法创建； 此处使用硅谷的 测试号
+    菜单接口文档 https://developers.weixin.qq.com/doc/offiaccount/Custom_Menus/Creating_Custom-Defined_Menu.html
+    数据库中 存储 公众号 菜单，通过web 后台 对菜单进行增删改 操作，同步到微信公众号，参考 service_wechat
+
+
+问题所在： 包无法引入，就版试一下 附近的版本，有自动提示，然后依次clean install;
+            dependencyManagement pom中 该项目依赖不会引入，供子工程使用，子类声明版本即可使用；
+            避免 子工程 全依赖父工程

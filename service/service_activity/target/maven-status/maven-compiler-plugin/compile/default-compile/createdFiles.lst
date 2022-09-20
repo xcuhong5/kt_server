@@ -1,0 +1,9 @@
+com\activity\config\ActivityConfig.class
+com\activity\service\CouponUseService.class
+com\activity\service\impl\CouponUseServiceImpl.class
+com\activity\ActivityServiceApplication.class
+com\activity\controller\CouponInfoController.class
+com\activity\service\impl\CouponInfoServiceImpl.class
+com\activity\mapper\CouponInfoMapper.class
+com\activity\mapper\CouponUseMapper.class
+com\activity\service\CouponInfoService.class

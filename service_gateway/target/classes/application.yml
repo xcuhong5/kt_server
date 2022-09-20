@@ -1,0 +1,46 @@
+# 服务端口
+server:
+  port: 8333
+# 服务名
+spring:
+  application:
+    name: service-gateway
+  # 配置 nacos 服务地址
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    # 使用服务发现路由
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      # service-vod 模块配置
+      routes:
+        # 路由 id ；最好和服务名 一致    讲师 课程 模块
+        - id: service-vod
+          # lb:使用LoadBalancerClient 实现负载均衡，后面 service-vod 是微服务的名称【主要应用于集群环境】
+          uri: lb://service-vod
+          # 断言； 路由路径规则，这种路径格式 会启动路由服务
+          predicates:
+            - Path= /*/vod/**
+        # 订单模块
+        - id: service-order
+          uri: lb://service-order
+          predicates:
+            - Path= /*/order/**
+        # 营销管理 模块
+        - id: service-activity
+          uri: lb://service-activity
+          predicates:
+            - Path= /*/activity/**
+        # 用户管理 模块
+        - id: service-user
+          uri: lb://service-user
+          predicates:
+            - Path= /*/user/**
+        # 微信公众号 模块
+        - id: service-wechat
+          uri: lb://service-wechat
+          predicates:
+            - Path= /*/wechat/**

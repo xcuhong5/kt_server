@@ -1,0 +1,35 @@
+# 服务端口
+server:
+  port: 8302
+# 服务名
+spring:
+  application:
+    name: service-order
+  # swagger2 配置
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  # mysql 数据库 连接
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/glkt_order?characterEncoding=utf-8&useSSL=false
+    username: root
+    password: admin
+    type: com.alibaba.druid.pool.DruidDataSource
+
+    # 返回json 的全局 时间 格式
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+  # 配置 nacos 的 地址
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+
+# mybatis 日志
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

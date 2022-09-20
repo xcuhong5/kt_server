@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vod.mapper.VideoVisitorMapper">
+
+    <resultMap id="BaseResultMap" type="com.atguigu.ggkt.model.vod.VideoVisitor">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="courseId" column="course_id" jdbcType="BIGINT"/>
+        <result property="videoId" column="video_id" jdbcType="BIGINT"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="nickName" column="nick_name" jdbcType="VARCHAR"/>
+        <result property="joinTime" column="join_time" jdbcType="VARCHAR"/>
+        <result property="leaveTime" column="leave_time" jdbcType="VARCHAR"/>
+        <result property="duration" column="duration" jdbcType="BIGINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,course_id,video_id,
+        user_id,nick_name,join_time,
+        leave_time,duration,create_time,
+        update_time,is_deleted
+    </sql>
+    <select id="findCount" resultType="com.atguigu.ggkt.vo.vod.VideoVisitorCountVo">
+        select count(DISTINCT (user_id)) as userCount, DATE (join_time) as joinTime
+        from video_visitor
+        where course_id = #{courseId}
+          and
+            DATE (join_time) >= #{startDate}
+          and
+            DATE (join_time) &lt;= #{endDate}
+        group by DATE (join_time);
+
+    </select>
+</mapper>
