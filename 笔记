@@ -70,6 +70,9 @@
 9. 微信公众号 ：https://mp.weixin.qq.com/  只能企业创建，个人无法创建； 此处使用硅谷的 测试号
     菜单接口文档 https://developers.weixin.qq.com/doc/offiaccount/Custom_Menus/Creating_Custom-Defined_Menu.html
     数据库中 存储 公众号 菜单，通过web 后台 对菜单进行增删改 操作，同步到微信公众号，参考 service_wechat
+    暂停开发
+
+10. 腾讯云 devops 一站式部署
 
 
 问题所在： 包无法引入，就版试一下 附近的版本，有自动提示，然后依次clean install;
